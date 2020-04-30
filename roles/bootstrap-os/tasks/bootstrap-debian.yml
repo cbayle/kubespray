@@ -69,6 +69,46 @@
     - '"bionic" in os_release.stdout'
     - need_dnssec_allow_downgrade.rc
 
+- name: Change Network Name Resolution configuration
+  raw: sed -i -e 's/^\([ ]*nameservers:\)/#\1/' /etc/netplan/01-netcfg.yaml
+  become: true
+  environment: {}
+  when:
+    - '"bionic" in os_release.stdout'
+    - need_dnssec_allow_downgrade.rc
+
+- name: Change Network Name Resolution configuration
+  raw: sed -i -e 's/^\([ ]*addresses:\)/#\1/' /etc/netplan/01-netcfg.yaml
+  become: true
+  environment: {}
+  when:
+    - '"bionic" in os_release.stdout'
+    - need_dnssec_allow_downgrade.rc
+
+- name: Apply netplan
+  raw: netplan apply
+  become: true
+  environment: {}
+  when:
+    - '"bionic" in os_release.stdout'
+    - need_dnssec_allow_downgrade.rc
+
+- name: Increase ssh Max Retry
+  raw: sed -i -e 's/^#MaxAuthTries 6/MaxAuthTries 60/' /etc/ssh/sshd_config
+  become: true
+  environment: {}
+  when:
+    - '"bionic" in os_release.stdout'
+    - need_dnssec_allow_downgrade.rc
+
+- name: Restart ssh service
+  raw: service ssh restart
+  become: true
+  environment: {}
+  when:
+    - '"bionic" in os_release.stdout'
+    - need_dnssec_allow_downgrade.rc
+
 - name: Restart systemd-resolved service
   raw: systemctl restart systemd-resolved
   become: true
